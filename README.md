@@ -48,28 +48,3 @@ Checks if the cookies file exists and if the cookies are still valid.
 
 Highlights elements on the Instagram page for debugging purposes.
 
-## Example Code:
-
-```javascript
-// Highlight comment box in green when commenting
-if (elementType === "comment" && commentBox) {
-    await page.evaluate((box) => {
-        box.style.border = "3px solid green";
-        box.style.transition = "border 0.5s ease";
-    }, commentBox);
-} else {
-    // If not commenting, reset the comment box border
-    await page.evaluate(() => {
-        const boxes = document.querySelectorAll('textarea');
-        boxes.forEach((box) => {
-            box.style.border = "";
-        });
-    });
-}
-
-// Optionally, reset the body border if necessary
-if (elementType !== "like" && elementType !== "comment") {
-    await page.evaluate(() => {
-        document.body.style.border = "";
-    });
-}
