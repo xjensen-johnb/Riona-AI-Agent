@@ -14,7 +14,7 @@ TwitterAgent is a Node.js application that automates interactions with Instagram
 ```sh
 git clone https://github.com/david-patrick-chuks/Instagram-Agent.git
 cd Instagram-Agent
-
+```
 ## Project Structure
 
 - `Agent.js`: Main script that handles Instagram login, post interactions, and comment generation.
