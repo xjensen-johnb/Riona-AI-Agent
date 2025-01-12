@@ -1,10 +1,9 @@
 {
   "name": "twitteragent",
   "version": "1.0.0",
-  "main": "Agent.js",
-  "type": "module",
+  "main": "src/index.ts",
   "scripts": {
-    "dev": "node Agent.js"
+    "start": "tsc && node build/index.js"
   },
   "keywords": [],
   "author": "",
@@ -14,6 +13,19 @@
     "@google/generative-ai": "^0.21.0",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
-    "playwright": "^1.49.1"
+    "playwright": "^1.49.1",
+    "proxy-chain": "^2.5.6",
+    "puppeteer": "^24.0.0",
+    "puppeteer-extra": "^3.3.6",
+    "puppeteer-extra-plugin-adblocker": "^2.13.6",
+    "puppeteer-extra-plugin-stealth": "^2.11.2",
+    "typescript": "^5.7.3",
+    "user-agents": "^1.1.416",
+    "winston": "^3.17.0",
+    "winston-daily-rotate-file": "^5.0.0"
+  },
+  "devDependencies": {
+    "@types/puppeteer": "^5.4.7",
+    "@types/user-agents": "^1.0.4"
   }
 }

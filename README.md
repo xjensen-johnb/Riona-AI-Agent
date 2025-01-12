@@ -48,3 +48,11 @@ Checks if the cookies file exists and if the cookies are still valid.
 
 Highlights elements on the Instagram page for debugging purposes.
 
+
+
+https://proxifly.dev/account#apiKeys
+
+const proxifly = new (require('proxifly'))({
+  // Not required, but having one removes limits (get your key at https://proxifly.dev).
+  apiKey: 'api_test_key'
+})
