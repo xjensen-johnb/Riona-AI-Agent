@@ -1,6 +1,8 @@
 import { promises as fs } from "fs";
+import path from "path";
 import { geminiApiKeys } from "../secret";
 import logger from "../config/logger";
+
 
 export async function Instagram_cookiesExist(): Promise<boolean> {
     try {
@@ -92,3 +94,98 @@ export function setup_HandleError(error: unknown, context: string): void {
         logger.error(`An unknown error occurred in ${context}: ${error}`);
     }
 }
+
+
+
+
+
+// Function to save tweet data to tweetData.json
+export const saveTweetData = async function (tweetContent: string, imageUrl: string, timeTweeted: string): Promise<void> {
+    const tweetDataPath = path.join(__dirname, '../data/tweetData.json');
+    const tweetData = {
+        tweetContent,
+        imageUrl: imageUrl || null,
+        timeTweeted,
+    };
+
+    try {
+        // Check if the file exists
+        await fs.access(tweetDataPath);
+        // Read the existing data
+        const data = await fs.readFile(tweetDataPath, 'utf-8');
+        const json = JSON.parse(data);
+        // Append the new tweet data
+        json.push(tweetData);
+        // Write the updated data back to the file
+        await fs.writeFile(tweetDataPath, JSON.stringify(json, null, 2));
+    } catch (error) {
+        if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
+            // File does not exist, create it with the new tweet data
+            await fs.writeFile(tweetDataPath, JSON.stringify([tweetData], null, 2));
+        } else {
+            logger.error('Error saving tweet data:', error);
+            throw error;
+        }
+    }
+};
+
+// Function to check if the first object's time in tweetData.json is more than 24 hours old and delete the file if necessary
+export const checkAndDeleteOldTweetData = async function (): Promise<void> {
+    const tweetDataPath = path.join(__dirname, '../data/tweetData.json');
+
+    try {
+        // Check if the file exists
+        await fs.access(tweetDataPath);
+        // Read the existing data
+        const data = await fs.readFile(tweetDataPath, 'utf-8');
+        const json = JSON.parse(data);
+
+        if (json.length > 0) {
+            const firstTweetTime = new Date(json[0].timeTweeted).getTime();
+            const currentTime = Date.now();
+            const timeDifference = currentTime - firstTweetTime;
+
+            // Check if the time difference is more than 24 hours (86400000 milliseconds)
+            if (timeDifference > 86400000) {
+                await fs.unlink(tweetDataPath);
+                logger.info('tweetData.json file deleted because the first tweet is more than 24 hours old.');
+            }
+        }
+    } catch (error) {
+        const err = error as NodeJS.ErrnoException;
+        if (err.code !== 'ENOENT') {
+            logger.error('Error checking tweet data:', err);
+            throw err;
+        }
+    }
+};
+
+
+
+// Function to check if the tweetData.json file has 17 or more objects
+export const canSendTweet = async function (): Promise<boolean> {
+    const tweetDataPath = path.join(__dirname, '../data/tweetData.json');
+
+    try {
+        // Check if the file exists
+        await fs.access(tweetDataPath);
+        // Read the existing data
+        const data = await fs.readFile(tweetDataPath, 'utf-8');
+        const json = JSON.parse(data);
+
+        // Check if the file has 17 or more objects
+        if (json.length >= 17) {
+            return false;
+        }
+        return true;
+    } catch (error) {
+        const err = error as NodeJS.ErrnoException;
+        if (err.code === 'ENOENT') {
+            // File does not exist, so it's safe to send a tweet
+            return true;
+        } else {
+            logger.error('Error checking tweet data:', err);
+            throw err;
+        }
+    }
+};

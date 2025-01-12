@@ -1,5 +1,5 @@
 {
-  "name": "twitteragent",
+  "name": "riona-ai-agent",
   "version": "1.0.0",
   "main": "src/index.ts",
   "scripts": {
@@ -8,17 +8,20 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "",
+  "description": "Riona-AI-Agent is an AI-powered automation tool designed to interact with various social media platforms.",
   "dependencies": {
     "@google/generative-ai": "^0.21.0",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
+    "node-cron": "^3.0.3",
     "playwright": "^1.49.1",
     "proxy-chain": "^2.5.6",
     "puppeteer": "^24.0.0",
     "puppeteer-extra": "^3.3.6",
     "puppeteer-extra-plugin-adblocker": "^2.13.6",
     "puppeteer-extra-plugin-stealth": "^2.11.2",
+    "request": "^2.88.2",
+    "twitter-api-v2": "^1.19.0",
     "typescript": "^5.7.3",
     "user-agents": "^1.1.416",
     "winston": "^3.17.0",
@@ -26,6 +29,7 @@
   },
   "devDependencies": {
     "@types/puppeteer": "^5.4.7",
+    "@types/request": "^2.48.12",
     "@types/user-agents": "^1.0.4"
   }
 }

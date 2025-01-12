@@ -25,10 +25,10 @@ async function runInstagram() {
     // Create a local proxy server
     const server = new Server({ port: 8000 });
     await server.listen();
-
+    const checkMode = process.env.NODE_ENV === "production" ? true : false;
     const proxyUrl = `http://localhost:8000`;
     const browser: Browser = await puppeteer.launch({
-        headless: false,
+        headless: checkMode,
         args: [`--proxy-server=${proxyUrl}`], // Use the proxy server
     });
 
