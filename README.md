@@ -2,6 +2,14 @@
 
 Riona-AI-Agent is an AI-powered automation tool designed to interact with various social media platforms like Instagram, Twitter, and GitHub. It leverages advanced AI models to generate engaging content, automate interactions, and manage social media accounts efficiently.
 
+
+Before using the automation features, you can train the agent character with personalized content. You can upload your content through any of the following:
+
+- **YouTube Video URL** 🎥
+- **Audio File** 🎙️
+- **Portfolio or Website Link** 🌐
+- **File Formats Supported**: PDF, DOC, DOCX, TXT 📄
+
 ## Features
 
 - **Instagram Automation**: Automatically log in, like posts, and leave thoughtful comments.
