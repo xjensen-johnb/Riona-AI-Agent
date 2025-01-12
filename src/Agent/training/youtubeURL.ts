@@ -48,15 +48,6 @@ async function getYouTubeTranscript(url: string): Promise<string> {
     }
 }
 
-// Example usage:
-// (async () => {
-//     const url = 'https://www.youtube.com/watch?v=GWseWxB7ERc'
-//     const transcript = await getYouTubeTranscript(url);
-//     const source = await generateTrainingPrompt(transcript)
-//     // logger.info(source);
-//     console.log(source[0]?.fullTranscript);
-// })();
-
 
 
 /**
@@ -88,6 +79,6 @@ export async function Train_Agent_with_Youtube_URL(url: string) {
         return { error: error instanceof Error ? error.message : `Error in Train_Agent_with_Youtube_URL: ${error}` };
     }
 }
-// const url = "https://www.youtube.com/watch?v=kTADMgEDlIQ&t=22s"
+
 const url = 'https://youtu.be/jSQ6Mru88y4?si=viP_FOYSD1AeVcZ9'
 Train_Agent_with_Youtube_URL(url)
