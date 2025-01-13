@@ -4,9 +4,9 @@
   "main": "src/index.ts",
   "scripts": {
     "start": "tsc && node build/index.js",
-    "train-model" : "tsc && node build/Agent/training/Model.js",
+    "train-model": "tsc && node build/Agent/training/Model.js",
     "train:link": "tsc && node build/Agent/training/WebsiteScraping.js",
-    "train:audio" : "tsc && node build/Agent/training/Audio.js"
+    "train:audio": "tsc && node build/Agent/training/Audio.js"
   },
   "keywords": [],
   "author": "",
@@ -21,6 +21,7 @@
     "express": "^4.21.2",
     "jsdom": "^26.0.0",
     "mammoth": "^1.9.0",
+    "mongoose": "^8.9.4",
     "node-cron": "^3.0.3",
     "pdf-parse": "^1.1.1",
     "playwright": "^1.49.1",
