@@ -1,28 +1,20 @@
 
-import { runInstagram } from './client/Instagram';
-import logger, { setupErrorHandlers } from './config/logger';
-import { setup_HandleError } from './utils';
-// import { main as twitterMain } from './client/Twitter'; //
-// import { main as githubMain } from './client/GitHub'; // 
+import dotenv from "dotenv";
+import logger from "./config/logger";
+import { shutdown } from "./services";
+import app from "./app";
 
-// Set up process-level error handlers
-setupErrorHandlers();
+dotenv.config();
 
+const server = app.listen(process.env.PORT || 3000, () => {
+  logger.info(`Server is running on port ${process.env.PORT || 3000}`);
+});
 
-const runAgents = async () => {
-    logger.info("Starting Instagram agent...");
-    await runInstagram();
-    logger.info("Instagram agent finished.");
-
-    // logger.info("Starting Twitter agent...");
-    // await twitterMain();
-    // logger.info("Twitter agent finished.");
-
-    // logger.info("Starting GitHub agent...");
-    // await githubMain();
-    // .log("GitHub agent finished.");
-};
-
-runAgents().catch(error => {
-    setup_HandleError(error , "Error running agents:");
-})
+process.on("SIGTERM", () => {
+  logger.info("Received SIGTERM signal.");
+  shutdown(server);
+});
+process.on("SIGINT", () => {
+  logger.info("Received SIGINT signal.");
+  shutdown(server);
+});
