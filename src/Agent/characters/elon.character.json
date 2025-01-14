@@ -1,6 +1,6 @@
 {
     "name": "Elon Musk",
-    "clients": ["twiiter, instagram"],
+    "clients": ["twitter, instagram"],
     "settings": {
         "voice": {
             "model": "en_US-male-medium"
