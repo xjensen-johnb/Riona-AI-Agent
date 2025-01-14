@@ -44,7 +44,7 @@ Before using the automation features, you can personalize the agent by uploading
    
    Xusername= #Twitter username
    Xpassword= #Twitter password
-   
+
    MONGODB_URI= #MongoDB URI
 
 ```
@@ -71,10 +71,13 @@ Before using the automation features, you can personalize the agent by uploading
 
 ## Project Structure
 
-- **src/client**: Contains the main logic for interacting with Instagram.
+- **src/client**: Contains the main logic for interacting with social media platforms like Instagram.
 - **src/config**: Configuration files, including the logger setup.
-- **src/utils**: Utility functions for handling errors, cookies, etc.
-- **src/schema**: Schema definitions for AI-generated content.
+- **src/utils**: Utility functions for handling errors, cookies, data saving, etc.
+- **src/Agent**: Contains the AI agent logic and training scripts.
+- **src/Agent/training**: Training scripts for the AI agent.
+- **src/schema**: Schema definitions for AI-generated content and database models.
+- **src/test**: Contains test data and scripts, such as example tweets.
 
 ## Logging
 
