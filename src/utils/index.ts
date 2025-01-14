@@ -4,29 +4,34 @@ import { geminiApiKeys } from "../secret";
 import logger from "../config/logger";
 
 
-
 export async function Instagram_cookiesExist(): Promise<boolean> {
     try {
         const cookiesPath = "./cookies/Instagramcookies.json";
-        // Check if the file exists
-        await fs.access(cookiesPath);
-        
+        await fs.access(cookiesPath); // Check if file exists
+
         const cookiesData = await fs.readFile(cookiesPath, "utf-8");
         const cookies = JSON.parse(cookiesData);
 
-        // Find the sessionid cookie
-        const sessionIdCookie = cookies.find((cookie: { name: string }) => cookie.name === 'sessionid');
+        // Priority-based cookie validation
+        const primaryCookie = cookies.find((cookie: { name: string }) => cookie.name === 'sessionid');
+        const fallbackCookie = cookies.find((cookie: { name: string }) => cookie.name === 'csrftoken');
 
-        // If sessionid cookie is not found, return false
-        if (!sessionIdCookie) return false;
-
-        // Check if the sessionid cookie has expired
         const currentTimestamp = Math.floor(Date.now() / 1000);
-        return sessionIdCookie.expires > currentTimestamp;
+
+        // Validate primary cookie (sessionid)
+        if (primaryCookie && primaryCookie.expires > currentTimestamp) {
+            return true;
+        }
+
+        // Fallback to csrftoken if sessionid is missing or expired
+        if (fallbackCookie && fallbackCookie.expires > currentTimestamp) {
+            return true;
+        }
+
+        return false;
     } catch (error) {
         const err = error as NodeJS.ErrnoException;
         if (err.code === 'ENOENT') {
-            // File does not exist
             logger.warn("Cookies file does not exist.");
             return false;
         } else {
@@ -35,6 +40,7 @@ export async function Instagram_cookiesExist(): Promise<boolean> {
         }
     }
 }
+
 
 
 export async function saveCookies(cookiesPath: string, cookies: any[]): Promise<void> {
@@ -51,7 +57,7 @@ export async function loadCookies(cookiesPath: string): Promise<any[]> {
     try {
         // Check if the file exists
         await fs.access(cookiesPath);
-        
+
         // Read and parse the cookies file
         const cookiesData = await fs.readFile(cookiesPath, "utf-8");
         const cookies = JSON.parse(cookiesData);
@@ -64,8 +70,8 @@ export async function loadCookies(cookiesPath: string): Promise<any[]> {
 
 // Function to get the next API key in the list
 export const getNextApiKey = (currentApiKeyIndex: number) => {
-  currentApiKeyIndex = (currentApiKeyIndex + 1) % geminiApiKeys.length; // Circular rotation of API keys
-  return geminiApiKeys[currentApiKeyIndex];
+    currentApiKeyIndex = (currentApiKeyIndex + 1) % geminiApiKeys.length; // Circular rotation of API keys
+    return geminiApiKeys[currentApiKeyIndex];
 };
 
 
@@ -77,15 +83,15 @@ export async function handleError(error: unknown, currentApiKeyIndex: number, sc
             const currentApiKeyName = `GEMINI_API_KEY_${currentApiKeyIndex + 1}`;
             return runAgent(schema, prompt);
         } else if (error.message.includes("503 Service Unavailable")) {
-            logger.error( "Service is temporarily unavailable. Retrying...");
+            logger.error("Service is temporarily unavailable. Retrying...");
             await new Promise(resolve => setTimeout(resolve, 5000));
             return runAgent(schema, prompt);
         } else {
-        logger.error(`Error generating training prompt: ${error.message}`);
+            logger.error(`Error generating training prompt: ${error.message}`);
             return `An error occurred: ${error.message}`;
         }
     } else {
-      logger.error("An unknown error occurred:", error);
+        logger.error("An unknown error occurred:", error);
         return "An unknown error occurred.";
     }
 }

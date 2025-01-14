@@ -22,35 +22,27 @@ puppeteer.use(
 
 
 async function runInstagram() {
-    // Create a local proxy server
     const server = new Server({ port: 8000 });
     await server.listen();
-    const checkMode = process.env.NODE_ENV === "production" ? true : false;
     const proxyUrl = `http://localhost:8000`;
-    const browser: Browser = await puppeteer.launch({
-        headless: checkMode,
-        args: [`--proxy-server=${proxyUrl}`], // Use the proxy server
+    const browser = await puppeteer.launch({
+        headless: false,
+        args: [`--proxy-server=${proxyUrl}`],
     });
 
-    // Check if cookies exist and load them into the page
-    if (await Instagram_cookiesExist()) {
-        logger.info("Loading cookies...:🚧");
-        const cookies = await loadCookies("./cookies/Instagramcookies.json");
-        await browser.setCookie(...cookies);
-    }
     const page = await browser.newPage();
-    // await page.setViewport({ width: 1280, height: 800, deviceScaleFactor: 1 });
+    const cookiesPath = "./cookies/Instagramcookies.json";
 
-    // Set a random PC user-agent
-    const userAgent = new UserAgent({ deviceCategory: "desktop" });
-    const randomUserAgent = userAgent.toString();
-    logger.info(`Using user-agent: ${randomUserAgent}`);
-    await page.setUserAgent(randomUserAgent);
+    const checkCookies = await Instagram_cookiesExist();
+    logger.info(`Checking cookies existence: ${checkCookies}`);
 
-    // Check if cookies
-    if (await Instagram_cookiesExist()) {
-        logger.info("Cookies loaded, skipping login...");
-        await page.goto("https://www.instagram.com", { waitUntil: "networkidle2" });
+    if (checkCookies) {
+        const cookies = await loadCookies(cookiesPath);
+        await page.setCookie(...cookies);
+        logger.info('Cookies loaded and set on the page.');
+
+        // Navigate to Instagram to verify if cookies are valid
+        await page.goto("https://www.instagram.com/", { waitUntil: 'networkidle2' });
 
         // Check if login was successful by verifying page content (e.g., user profile or feed)
         const isLoggedIn = await page.$("a[href='/direct/inbox/']");
@@ -80,8 +72,6 @@ async function runInstagram() {
 }
 
 
-
-
 const loginWithCredentials = async (page: any, browser: Browser) => {
     try {
         await page.goto("https://www.instagram.com/accounts/login/");
@@ -97,9 +87,11 @@ const loginWithCredentials = async (page: any, browser: Browser) => {
 
         // Save cookies after login
         const cookies = await browser.cookies();
+        // logger.info("Saving cookies after login...",cookies);
         await saveCookies("./cookies/Instagramcookies.json", cookies);
     } catch (error) {
-        logger.error("Error logging in with credentials:", error);
+        // logger.error("Error logging in with credentials:", error);
+        logger.error("Error logging in with credentials:");
     }
 }
 
@@ -151,7 +143,6 @@ async function interactWithPosts(page: any) {
             if (moreLink) {
                 console.log(`Expanding caption for post ${postIndex}...`);
                 await moreLink.click(); // Click the '...more' link to expand the caption
-                await page.waitForTimeout(1000); // Wait for the caption to expand
                 const expandedCaption = await captionElement.evaluate(
                     (el: HTMLElement) => el.innerText
                 );
