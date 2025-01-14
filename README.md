@@ -11,7 +11,7 @@ Before using the automation features, you can train the agent character with per
 - **File Formats Supported**: PDF, DOC, DOCX, TXT 📄
 
 ## Features
-
+- **Twitter API**: Tweets 17 times in a Day, [ 80 minutes per post]
 - **Instagram Automation**: Automatically log in, like posts, and leave thoughtful comments.
 - **Twitter Automation**: (Coming soon) Automatically tweet, retweet, and like tweets.
 - **GitHub Automation**: (Coming soon) Automatically manage repositories, issues, and pull requests.
