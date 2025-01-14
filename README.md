@@ -1,9 +1,8 @@
 ## Riona-AI-Agent 🌸
 
-Riona-AI-Agent is an AI-powered automation tool designed to interact with various social media platforms like Instagram, Twitter, and GitHub. It leverages advanced AI models to generate engaging content, automate interactions, and manage social media accounts efficiently.
+Riona-AI-Agent is an AI-powered automation tool designed for **Instagram** to automate social media interactions such as posting, liking, and commenting. It leverages advanced AI models to generate engaging content, automate interactions, and manage Instagram accounts efficiently.
 
-
-Before using the automation features, you can train the agent character with personalized content. You can upload your content through any of the following:
+Before using the automation features, you can personalize the agent by uploading your content, including:
 
 - **YouTube Video URL** 🎥
 - **Audio File** 🎙️
@@ -11,60 +10,68 @@ Before using the automation features, you can train the agent character with per
 - **File Formats Supported**: PDF, DOC, DOCX, TXT 📄
 
 ## Features
-- **Twitter API**: Tweets 17 times in a Day, [ 80 minutes per post]
-- **Instagram Automation**: Automatically log in, like posts, and leave thoughtful comments.
-- **Twitter Automation**: (Coming soon) Automatically tweet, retweet, and like tweets.
-- **GitHub Automation**: (Coming soon) Automatically manage repositories, issues, and pull requests.
-- **AI-Powered Content Generation**: Use Google Generative AI to generate engaging comments and posts.
+
+- **Instagram Automation**: Automatically log in, post photos, like posts, and leave thoughtful comments.
+- **AI-Powered Content Generation**: Use Google Generative AI to create engaging captions and comments.
 - **Proxy Support**: Use proxies to manage multiple accounts and avoid rate limits.
 - **Cookie Management**: Save and load cookies to maintain sessions across restarts.
+
+**Upcoming Features:**
+
+- **Twitter Automation**: (Coming soon) Automatically tweet, retweet, and like tweets.
+- **GitHub Automation**: (Coming soon) Automatically manage repositories, issues, and pull requests.
 
 ## Installation
 
 1. **Clone the repository**:
-    ```sh
-    git clone https://github.com/david-patrick-chuks/Riona-AI-Agent.git
-    cd Riona-AI-Agent
-    ```
+
+   ```sh
+   git clone https://github.com/david-patrick-chuks/Riona-AI-Agent.git
+   cd Riona-AI-Agent
+   ```
 
 2. **Install dependencies**:
-    ```sh
-    npm install
-    ```
+
+   ```sh
+   npm install
+   ```
 
 3. **Set up environment variables**:
-    rename the [.env.example](http://_vscodecontentref_/1) file to  [.env](http://_vscodecontentref_/1)  file in the root directory and add your credentials and API keys (optional). Refer to the [.env.example](http://_vscodecontentref_/2) file for the required variables.
-    ```dotenv
-    # Instagram credentials
-    IGusername=your_instagram_username
-    IGpassword=your_instagram_password
+   Rename the [.env.example](http://_vscodecontentref_/1) file to [.env](http://_vscodecontentref_/1) in the root directory and add your Instagram credentials. Refer to the [.env.example](http://_vscodecontentref_/2) file for the required variables.
+   ```dotenv # Instagram credentials
+   IGusername=your_instagram_username
+   IGpassword=your_instagram_password 
+   
+   Xusername= #Twitter username
+   Xpassword= #Twitter password
+   
+   MONGODB_URI= #MongoDB URI
 
-    # Twitter credentials
-    Xusername=your_twitter_username
-    Xpassword=your_twitter_password
-
-    ```
+```
 
 ## Usage
 
-1. **Run the agent**:
-    ```sh
-    npm start
-    ```
+1. **Run the Instagram agent**:
+   ```sh
+   npm start
+   ```
 
-<!-- 2. **Run the Twitter agent** (Coming soon):
-    ```sh
-    npm run start:twitter
-    ```
+**Upcoming Features:**
 
-3. **Run the GitHub agent** (Coming soon):
-    ```sh
-    npm run start:github
-    ``` -->
+- **Run the Twitter agent** (Coming soon):
+
+  ```sh
+  npm run start:twitter
+  ```
+
+- **Run the GitHub agent** (Coming soon):
+  ```sh
+  npm run start:github
+  ```
 
 ## Project Structure
 
-- **src/client**: Contains the main logic for interacting with social media platforms.
+- **src/client**: Contains the main logic for interacting with Instagram.
 - **src/config**: Configuration files, including the logger setup.
 - **src/utils**: Utility functions for handling errors, cookies, etc.
 - **src/schema**: Schema definitions for AI-generated content.
@@ -90,6 +97,3 @@ This project is licensed under the MIT License. See the LICENSE file for details
 - [Google Generative AI](https://ai.google/tools/) for providing the AI models.
 - [Puppeteer](https://github.com/puppeteer/puppeteer) for browser automation.
 - [puppeteer-extra](https://github.com/berstend/puppeteer-extra) for additional plugins and enhancements.
-
----
-
