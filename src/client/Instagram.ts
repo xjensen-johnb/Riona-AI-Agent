@@ -159,7 +159,8 @@ async function interactWithPosts(page: any) {
                 console.log(`Commenting on post ${postIndex}...`);
                 const prompt = `Craft a thoughtful, engaging, and mature reply to the following post: "${caption}". Ensure the reply is relevant, insightful, and adds value to the conversation. It should reflect empathy and professionalism, and avoid sounding too casual or superficial. also it should be 300 characters or less. and it should not go against instagram Community Standards on spam. so you will have to try your best to humanize the reply`;
                 const schema = getInstagramCommentSchema();
-                const comment = await runAgent(schema, prompt); // Pass the updated caption
+                const result = await runAgent(schema, prompt); // Pass the updated caption
+                const comment = result[0]?.comment;
                 await commentBox.type(comment); // Replace with random comment
 
                 const postButtonSelector = `${postSelector} div[role="button"]:not([disabled]):has-text("Post")`;
