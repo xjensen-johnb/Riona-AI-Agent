@@ -46,8 +46,7 @@ Before using the automation features, you can personalize the agent by training 
    Xpassword= #Twitter password
 
    MONGODB_URI= #MongoDB URI
-
-```
+   ```
 
 ## Usage
 
