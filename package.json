@@ -6,7 +6,7 @@
     "start": "tsc && node build/index.js",
     "train-model": "tsc && node build/Agent/training/Model.js",
     "train:link": "tsc && node build/Agent/training/WebsiteScraping.js",
-    "train:audio": "tsc && node build/Agent/training/Audio.js"
+    "train:audio": "tsc && node build/Agent/training/TrainWithAudio.js"
   },
   "keywords": [],
   "author": "",
