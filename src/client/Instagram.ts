@@ -19,6 +19,7 @@ puppeteer.use(
     })
 );
 
+const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 async function runInstagram() {
     const server = new Server({ port: 8000 });
@@ -179,12 +180,12 @@ async function interactWithPosts(page: any) {
                 console.log("Comment box not found.");
             }
 
-            // Wait before moving to the next post (randomize between 5 and 10 seconds)
-            const delay = Math.floor(Math.random() * 5000) + 5000; // Random delay between 5 and 10 seconds
+            // Replace the waitForTimeout with our delay function
+            const waitTime = Math.floor(Math.random() * 5000) + 5000;
             console.log(
-                `Waiting ${delay / 1000} seconds before moving to the next post...`
+                `Waiting ${waitTime / 1000} seconds before moving to the next post...`
             );
-            await page.waitForTimeout(delay);
+            await delay(waitTime);
 
             // Scroll to the next post
             await page.evaluate(() => {
