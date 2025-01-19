@@ -1,4 +1,3 @@
-
 import { Browser, DEFAULT_INTERCEPT_RESOLUTION_PRIORITY } from "puppeteer";
 import puppeteer from "puppeteer-extra";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
@@ -163,8 +162,12 @@ async function interactWithPosts(page: any) {
                 const comment = result[0]?.comment;
                 await commentBox.type(comment); // Replace with random comment
 
-                const postButtonSelector = `${postSelector} div[role="button"]:not([disabled]):has-text("Post")`;
-                const postButton = await page.$(postButtonSelector);
+                // New selector approach for the post button
+                const postButton = await page.evaluateHandle(() => {
+                    const buttons = Array.from(document.querySelectorAll('div[role="button"]'));
+                    return buttons.find(button => button.textContent === 'Post' && !button.hasAttribute('disabled'));
+                });
+
                 if (postButton) {
                     console.log(`Posting comment on post ${postIndex}...`);
                     await postButton.click();
