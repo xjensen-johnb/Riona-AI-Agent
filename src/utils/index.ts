@@ -45,6 +45,8 @@ export async function Instagram_cookiesExist(): Promise<boolean> {
 
 export async function saveCookies(cookiesPath: string, cookies: any[]): Promise<void> {
     try {
+        const dir = path.dirname(cookiesPath);
+        await fs.mkdir(dir, { recursive: true });
         await fs.writeFile(cookiesPath, JSON.stringify(cookies, null, 2));
         logger.info("Cookies saved successfully.");
     } catch (error) {
