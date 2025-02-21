@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "main": "src/index.ts",
   "scripts": {
-    "start": "tsc && node build/index.js",
+    "start": "tsc && npm run postbuild && node build/index.js",
+    "postbuild": "copyfiles -u 3 src/Agent/characters/*.json build/Agent/characters",
     "train-model": "tsc && node build/Agent/training/Model.js",
     "train:link": "tsc && node build/Agent/training/WebsiteScraping.js",
     "train:audio": "tsc && node build/Agent/training/TrainWithAudio.js"
@@ -16,6 +17,7 @@
     "@google/generative-ai": "^0.21.0",
     "axios": "^1.7.9",
     "cookie-parser": "^1.4.7",
+    "copyfiles": "^2.4.1",
     "cron": "^3.5.0",
     "csv-parser": "^3.1.0",
     "dompurify": "^3.2.3",
@@ -35,6 +37,7 @@
     "puppeteer-extra": "^3.3.6",
     "puppeteer-extra-plugin-adblocker": "^2.13.6",
     "puppeteer-extra-plugin-stealth": "^2.11.2",
+    "readline-sync": "^1.4.10",
     "request": "^2.88.2",
     "request-promise": "^4.2.6",
     "textract": "^2.5.0",
@@ -52,6 +55,7 @@
     "@types/mime-types": "^2.1.4",
     "@types/pdf-parse": "^1.1.4",
     "@types/puppeteer": "^5.4.7",
+    "@types/readline-sync": "^1.4.8",
     "@types/request": "^2.48.12",
     "@types/textract": "^2.4.5",
     "@types/user-agents": "^1.0.4"
