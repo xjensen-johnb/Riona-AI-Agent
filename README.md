@@ -48,7 +48,7 @@ Before using the automation features, you can personalize the agent by training 
    MONGODB_URI= #MongoDB URI
    ```
 
-## MONGO DB SETUP (USING DOCKER)
+## MongoDB Setup (Using Docker)
 
 1. **Install Docker**:
    If you don't have Docker installed, download and install it from the [official website](https://www.docker.com/products/docker-desktop/)
