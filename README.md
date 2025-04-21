@@ -53,15 +53,16 @@ Before using the automation features, you can personalize the agent by training 
 1. **Install Docker**:
    If you don't have Docker installed, download and install it from the [official website](https://www.docker.com/products/docker-desktop/)
 2. **Run MongoDB using Docker Container**:
-   Option 1:
-   ```sh
-   docker run -d -p 27017:27017 --name instagram-ai-mongodb mongodb/mongodb-community-server:latest
-   ```
-   Option 2:
-   ```sh
-   docker run -d -p 27017:27017 --name instagram-ai-mongodb -v mongodb_data:/data/db mongodb/mongodb-community-server:latest
-   ```   
-   (Option 2: use this if you want to have like a permanent storage in you so your data won't be lost or remove if you stop or remove your MongoDB Docker container)
+
+    **Option 1:**
+      ```sh
+      docker run -d -p 27017:27017 --name instagram-ai-mongodb mongodb/mongodb-community-server:latest
+      ```
+    **Option 2:**
+      ```sh
+      docker run -d -p 27017:27017 --name instagram-ai-mongodb -v mongodb_data:/data/db mongodb/mongodb-community-server:latest
+      ```   
+      (Option 2: use this if you want to have like a permanent storage in you so your data won't be lost or remove if you stop or remove your Docker container)
 3. **Modify the MONGODB_URI in the .env file**:
    ```dotenv
    MONGODB_URI=mongodb://localhost:27017/instagram-ai-agent
