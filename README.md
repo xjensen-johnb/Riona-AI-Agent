@@ -48,6 +48,49 @@ Before using the automation features, you can personalize the agent by training 
    MONGODB_URI= #MongoDB URI
    ```
 
+## MONGO DB SETUP (USING DOCKER)
+
+1. **Install Docker**:
+   If you don't have Docker installed, download and install it from the [official website](https://www.docker.com/products/docker-desktop/)
+2. **Run MongoDB using Docker Container**:
+   Option 1:
+   ```sh
+   docker run -d -p 27017:27017 --name instagram-ai-mongodb mongodb/mongodb-community-server:latest
+   ```
+   Option 2:
+   ```sh
+   docker run -d -p 27017:27017 --name instagram-ai-mongodb -v mongodb_data:/data/db mongodb/mongodb-community-server:latest
+   ```   
+   (Option 2: use this if you want to have like a permanent storage in you so your data won't be lost or remove if you stop or remove your MongoDB Docker container)
+3. **Modify the MONGODB_URI in the .env file**:
+   ```dotenv
+   MONGODB_URI=mongodb://localhost:27017/instagram-ai-agent
+   ```
+4. **Verify the connection**:
+   Open a new terminal and run the following command:
+   ```sh
+   docker ps
+   ```
+   You should see the MongoDB container running.
+
+   Docker Commands (Additional Info):
+   - To stop the MongoDB container:
+     ```sh
+     docker stop instagram-ai-mongodb
+     ```
+   - To start the MongoDB container:
+       ```sh
+       docker start instagram-ai-mongodb
+       ```
+   - To remove the MongoDB container:
+      ```sh
+      docker rm instagram-ai-mongodb
+      ```
+   - To remove the MongoDB container and its data:
+      ```sh
+      docker rm -v instagram-ai-mongodb
+      ```
+
 ## Usage
 
 1. **Run the Instagram agent**:
