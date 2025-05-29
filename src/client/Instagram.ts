@@ -258,120 +258,6 @@ async function sendDirectMessage(page: any, username: string, message: string) {
   }
 }
 
-async function runInstagram() {
-  const server = new Server({ port: 8000 });
-  await server.listen();
-  const proxyUrl = `http://localhost:8000`;
-  const browser = await puppeteer.launch({
-    headless: false,
-    args: [`--proxy-server=${proxyUrl}`],
-  });
-
-  const page = await browser.newPage();
-  const cookiesPath = "./cookies/Instagramcookies.json";
-
-  const checkCookies = await Instagram_cookiesExist();
-  logger.info(`Checking cookies existence: ${checkCookies}`);
-
-  if (checkCookies) {
-    const cookies = await loadCookies(cookiesPath);
-    await page.setCookie(...cookies);
-    logger.info("Cookies loaded and set on the page.");
-
-    await page.goto("https://www.instagram.com/", {
-      waitUntil: "networkidle2",
-    });
-
-    const isLoggedIn = await page.$("a[href='/direct/inbox/']");
-    if (isLoggedIn) {
-      logger.info("Login verified with cookies.");
-    } else {
-      logger.warn("Cookies invalid or expired. Logging in again...");
-      await loginWithCredentials(page, browser);
-    }
-  } else {
-    await loginWithCredentials(page, browser);
-  }
-
-  // Create readline interface for user input
-  const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout,
-  });
-
-  // Ask user what they want to do
-  const answer = await new Promise<string>((resolve) => {
-    rl.question(
-      "What would you like to do?\n1. Interact with posts\n2. Send a direct message\nEnter your choice (1 or 2): ",
-      resolve
-    );
-  });
-
-  if (answer === "2") {
-    const username = await new Promise<string>((resolve) => {
-      rl.question("Enter the username to send message to: ", resolve);
-    });
-
-    const message = await new Promise<string>((resolve) => {
-      rl.question("Enter your message: ", resolve);
-    });
-
-    try {
-      await sendDirectMessage(page, username, message);
-    } catch (error) {
-      logger.error("Failed to send message:", error);
-    }
-    rl.close();
-    await browser.close();
-    return;
-  }
-
-  rl.close();
-
-  // Continue with the original post interaction logic
-  await page.goto("https://www.instagram.com/");
-
-  // Handle potential notification popup before interacting with posts
-  await handleNotificationPopup(page);
-
-  while (true) {
-    await interactWithPosts(page);
-    logger.info("Iteration complete, waiting 30 seconds before refreshing...");
-    await delay(30000);
-    try {
-      await page.reload({ waitUntil: "networkidle2" });
-    } catch (e) {
-      logger.warn("Error reloading page, continuing iteration: " + e);
-    }
-
-    // Handle potential notification popup after reload
-    await handleNotificationPopup(page);
-  }
-}
-
-const loginWithCredentials = async (page: any, browser: Browser) => {
-  try {
-    await page.goto("https://www.instagram.com/accounts/login/");
-    await page.waitForSelector('input[name="username"]');
-
-    // Fill out the login form
-    await page.type('input[name="username"]', IGusername); // Replace with your username
-    await page.type('input[name="password"]', IGpassword); // Replace with your password
-    await page.click('button[type="submit"]');
-
-    // Wait for navigation after login
-    await page.waitForNavigation();
-
-    // Save cookies after login
-    const cookies = await browser.cookies();
-    // logger.info("Saving cookies after login...",cookies);
-    await saveCookies("./cookies/Instagramcookies.json", cookies);
-  } catch (error) {
-    // logger.error("Error logging in with credentials:", error);
-    logger.error("Error logging in with credentials:");
-  }
-};
-
 async function interactWithPosts(page: any) {
   let postIndex = 1; // Start with the first post
   const maxPosts = 20; // Limit to prevent infinite scrolling
@@ -492,5 +378,114 @@ async function interactWithPosts(page: any) {
     }
   }
 }
+
+async function runInstagram() {
+  const server = new Server({ port: 8000 });
+  await server.listen();
+  const proxyUrl = `http://localhost:8000`;
+  const browser = await puppeteer.launch({
+    headless: false,
+    args: [`--proxy-server=${proxyUrl}`],
+  });
+
+  const page = await browser.newPage();
+  const cookiesPath = "./cookies/Instagramcookies.json";
+
+  const checkCookies = await Instagram_cookiesExist();
+  logger.info(`Checking cookies existence: ${checkCookies}`);
+
+  if (checkCookies) {
+    const cookies = await loadCookies(cookiesPath);
+    await page.setCookie(...cookies);
+    logger.info("Cookies loaded and set on the page.");
+
+    await page.goto("https://www.instagram.com/", {
+      waitUntil: "networkidle2",
+    });
+
+    const isLoggedIn = await page.$("a[href='/direct/inbox/']");
+    if (isLoggedIn) {
+      logger.info("Login verified with cookies.");
+    } else {
+      logger.warn("Cookies invalid or expired. Logging in again...");
+      await loginWithCredentials(page, browser);
+    }
+  } else {
+    await loginWithCredentials(page, browser);
+  }
+
+  // Create readline interface for user input
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
+  });
+
+  // Main loop for user interaction
+  while (true) {
+    const answer = await new Promise<string>((resolve) => {
+      rl.question(
+        "What would you like to do?\n1. Interact with posts\n2. Send a direct message\n3. Exit\nEnter your choice (1, 2, or 3): ",
+        resolve
+      );
+    });
+
+    if (answer === "1") {
+      await page.goto("https://www.instagram.com/");
+      await handleNotificationPopup(page);
+      await interactWithPosts(page);
+    } else if (answer === "2") {
+      const username = await new Promise<string>((resolve) => {
+        rl.question("Enter the username to send message to: ", resolve);
+      });
+
+      const message = await new Promise<string>((resolve) => {
+        rl.question("Enter your message: ", resolve);
+      });
+
+      try {
+        await sendDirectMessage(page, username, message);
+        logger.info("Message sent successfully.");
+      } catch (error) {
+        logger.error("Failed to send message:", error);
+      }
+    } else if (answer === "3") {
+      logger.info("Exiting.");
+      break; // Exit the while loop
+    } else {
+      console.log("Invalid choice. Please enter 1, 2, or 3.");
+    }
+  }
+
+  rl.close();
+  await browser.close();
+  await server.close(true); // Close the proxy server
+}
+
+const loginWithCredentials = async (page: any, browser: Browser) => {
+  try {
+    await page.goto("https://www.instagram.com/accounts/login/");
+    await page.waitForSelector('input[name="username"]');
+
+    // Fill out the login form
+    await page.type('input[name="username"]', IGusername);
+    await page.type('input[name="password"]', IGpassword);
+    await page.click('button[type="submit"]');
+
+    // Wait for navigation after login
+    await page.waitForNavigation();
+
+    // Save cookies after login
+    const cookies = await browser.cookies();
+    // logger.info("Saving cookies after login...",cookies);
+    await saveCookies("./cookies/Instagramcookies.json", cookies);
+
+    // Handle potential notification popup after successful login
+    await handleNotificationPopup(page);
+  } catch (error) {
+    // logger.error("Error logging in with credentials:", error);
+    logger.error("Error logging in with credentials:");
+    throw error; // Re-throw to indicate login failed
+  }
+};
 
 export { runInstagram };
