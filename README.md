@@ -1,6 +1,6 @@
-## Instagram-AI-Agent 🌸
+## Riona AI Agent 🌸
 
-Instagram-AI-Agent is an AI-powered automation tool designed for **Instagram** to automate social media interactions such as posting, liking, and commenting. It leverages advanced AI models to generate engaging content, automate interactions, and manage Instagram accounts efficiently.
+Riona AI Agent is an AI-powered automation tool designed for **Instagram and Twitter** to automate social media interactions such as posting, liking, and commenting. It leverages advanced AI models to generate engaging content, automate interactions, and manage social media accounts efficiently.
 
 Before using the automation features, you can personalize the agent by training with the following, including:
 
@@ -12,22 +12,22 @@ Before using the automation features, you can personalize the agent by training 
 ## Features
 
 - **Instagram Automation**: Automatically log in, post photos, like posts, and leave thoughtful comments.
-- **AI-Powered Content Generation**: Use Google Generative AI to create engaging captions and comments.
+- **Twitter Automation**: Automatically tweet, retweet, and like tweets.
+- **AI-Powered Content Generation**: Use Google Generative AI to create engaging captions and comments for Instagram and Twitter.
 - **Proxy Support**: Use proxies to manage multiple accounts and avoid rate limits.
 - **Cookie Management**: Save and load cookies to maintain sessions across restarts.
 
 **Upcoming Features:**
 
-- **Twitter Automation**: (Coming soon) Automatically tweet, retweet, and like tweets.
-- **GitHub Automation**: (Coming soon) Automatically manage repositories, issues, and pull requests.
+GitHub automation is planned for future development.
 
 ## Installation
 
 1. **Clone the repository**:
 
    ```sh
-   git clone https://github.com/david-patrick-chuks/Instagram-AI-Agent.git
-   cd Instagram-AI-Agent
+   git clone https://github.com/david-patrick-chuks/riona-ai-agent.git
+   cd riona-ai-agent
    ```
 
 2. **Install dependencies**:
@@ -37,7 +37,7 @@ Before using the automation features, you can personalize the agent by training 
    ```
 
 3. **Set up environment variables**:
-   Rename the [.env.example](http://_vscodecontentref_/1) file to [.env](http://_vscodecontentref_/1) in the root directory and add your Instagram credentials. Refer to the [.env.example](http://_vscodecontentref_/2) file for the required variables.
+   Rename the `.env.example` file to `.env` in the root directory and add your Instagram credentials. Refer to the `.env.example` file for the required variables.
    ```dotenv # Instagram credentials
    IGusername=your_instagram_username
    IGpassword=your_instagram_password 
@@ -50,23 +50,11 @@ Before using the automation features, you can personalize the agent by training 
 
 ## Usage
 
-1. **Run the Instagram agent**:
+1. **Run the agent**:
    ```sh
    npm start
    ```
-
-**Upcoming Features:**
-
-- **Run the Twitter agent** (Coming soon):
-
-  ```sh
-  npm run start:twitter
-  ```
-
-- **Run the GitHub agent** (Coming soon):
-  ```sh
-  npm run start:github
-  ```
+   Note: The specific platform (Instagram, Twitter) and actions performed by the agent are typically configured through environment variables in the `.env` file, or by selections made if the application prompts for choices at runtime.
 
 ## Project Structure
 
@@ -75,7 +63,7 @@ Before using the automation features, you can personalize the agent by training 
 - **src/utils**: Utility functions for handling errors, cookies, data saving, etc.
 - **src/Agent**: Contains the AI agent logic and training scripts.
 - **src/Agent/training**: Training scripts for the AI agent.
-- **src/schema**: Schema definitions for AI-generated content and database models.
+- **src/Agent/schema**: Schema definitions for AI-generated content and database models.
 - **src/test**: Contains test data and scripts, such as example tweets.
 
 ## Logging

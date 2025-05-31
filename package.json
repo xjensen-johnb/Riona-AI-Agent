@@ -5,7 +5,6 @@
   "scripts": {
     "start": "tsc && npm run postbuild && node build/index.js",
     "postbuild": "copyfiles -u 3 src/Agent/characters/*.json build/Agent/characters",
-    "train-model": "tsc && node build/Agent/training/Model.js",
     "train:link": "tsc && node build/Agent/training/WebsiteScraping.js",
     "train:audio": "tsc && node build/Agent/training/TrainWithAudio.js"
   },
