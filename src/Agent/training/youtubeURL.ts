@@ -2,6 +2,12 @@ import { YoutubeTranscript } from "youtube-transcript";
 import { generateTrainingPrompt } from "../script/summarize";
 import logger from "../../config/logger";
 
+interface YoutubeTranscriptResult {
+  url: string;
+  result?: any;
+  error?: string;
+}
+
 /**
  * Fetches the transcript of a given YouTube video URL.
  * @param url - The YouTube video URL.
@@ -87,7 +93,7 @@ export async function Train_Agent_with_Youtube_URL(url: string) {
  * @returns A promise that resolves to an array of training results.
  */
 export async function Train_Agent_with_Multiple_YouTube_URLs(urls: string[]) {
-  const results = [];
+  const results: YoutubeTranscriptResult[] = [];
   for (const url of urls) {
     try {
       const result = await Train_Agent_with_Youtube_URL(url);
