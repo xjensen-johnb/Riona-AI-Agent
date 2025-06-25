@@ -362,7 +362,6 @@ export class IgClient {
             const followers: string[] = [];
             let previousHeight = 0;
             let currentHeight = 0;
-            maxFollowers = maxFollowers + 1;
             // Scroll and collect followers until we reach the desired amount or can't scroll anymore
             console.log(maxFollowers);
             while (followers.length < maxFollowers) {
@@ -409,8 +408,8 @@ export class IgClient {
                 previousHeight = currentHeight;
             }
 
-            console.log(`Successfully scraped ${followers.length - 4} followers`);
-            return followers.slice(4);
+            console.log(`Successfully scraped ${followers.length} followers`);
+            return followers.slice(0, maxFollowers);
         } catch (error) {
             console.error(`Error scraping followers for ${targetAccount}:`, error);
             throw error;
