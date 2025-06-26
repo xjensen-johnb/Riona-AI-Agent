@@ -1,0 +1,143 @@
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
+
+:root {
+  --background-color: #0a0a1a;
+  --primary-color: #00f7ff;
+  --secondary-color: #faff00;
+  --text-color: #e0e0e0;
+  --card-bg-color: rgba(20, 20, 40, 0.8);
+  --border-color: rgba(0, 247, 255, 0.3);
+  --button-bg-color: transparent;
+  --button-hover-bg-color: rgba(0, 247, 255, 0.1);
+  --input-bg-color: rgba(255, 255, 255, 0.05);
+}
+
+body {
+  font-family: 'Orbitron', sans-serif;
+  background-color: var(--background-color);
+  color: var(--text-color);
+  margin: 0;
+  background-image:
+    linear-gradient(rgba(0, 247, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 247, 255, 0.05) 1px, transparent 1px);
+  background-size: 20px 20px;
+  overflow-x: hidden;
+}
+
+.container {
+  max-width: 800px;
+  margin: auto;
+  padding: 20px;
+}
+
+.card {
+  border: 1px solid var(--border-color);
+  border-radius: 5px;
+  padding: 20px;
+  margin-bottom: 20px;
+  background-color: var(--card-bg-color);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 0 15px rgba(0, 247, 255, 0.1), 0 0 30px rgba(0, 247, 255, 0.05);
+}
+
+.card h2 {
+  color: var(--primary-color);
+  text-shadow: 0 0 5px var(--primary-color);
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 10px;
+  margin-top: 0;
+}
+
+button {
+  padding: 10px 15px;
+  cursor: pointer;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  background-color: var(--button-bg-color);
+  color: var(--primary-color);
+  margin-right: 10px;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  font-family: 'Orbitron', sans-serif;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+button:hover {
+  background-color: var(--button-hover-bg-color);
+  box-shadow: 0 0 10px var(--primary-color);
+  text-shadow: 0 0 5px var(--primary-color);
+}
+
+button:disabled {
+  cursor: not-allowed;
+  border-color: #444;
+  color: #666;
+  background-color: #1a1a1a;
+}
+
+input {
+  padding: 10px;
+  width: calc(100% - 22px);
+  margin-bottom: 10px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  background-color: var(--input-bg-color);
+  color: var(--text-color);
+  font-family: 'Orbitron', sans-serif;
+}
+
+input::placeholder {
+  color: #888;
+}
+
+#logs {
+  background: #000;
+  padding: 10px;
+  border-radius: 5px;
+  min-height: 100px;
+  max-height: 300px;
+  overflow-y: auto;
+  font-family: monospace;
+  font-size: 0.9em;
+  border: 1px solid var(--border-color);
+  box-shadow: inset 0 0 10px rgba(0, 247, 255, 0.2);
+}
+
+#logs div {
+  padding: 2px 0;
+  border-bottom: 1px dashed rgba(0, 247, 255, 0.1);
+}
+
+#spinner-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(10, 10, 26, 0.9);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  color: var(--primary-color);
+  backdrop-filter: blur(5px);
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 5px solid var(--border-color);
+  border-top: 5px solid var(--primary-color);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 20px;
+  box-shadow: 0 0 20px var(--primary-color);
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

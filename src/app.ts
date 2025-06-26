@@ -38,10 +38,14 @@ app.use(express.urlencoded({ extended: true, limit: "1kb" })); // URL-encoded da
 app.use(cookieParser()); // Cookie parsing
 
 // Serve static files from the 'public' directory
-app.use(express.static('src/public'));
+app.use(express.static('frontend/dist'));
 
 // API Routes
 app.use('/api', apiRoutes);
+
+app.get('*', (_req, res) => {
+    res.sendFile('index.html', { root: 'frontend/dist' });
+});
 
 /*
 const runAgents = async () => {
@@ -72,38 +76,6 @@ runAgents().catch((error) => {
 app.use((err: Error, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
   logger.error('Unhandled error:', err);
   res.status(500).json({ error: 'Internal server error' });
-});
-
-// Add SSR POST handler for exit-interactions
-app.post('/panel/exit-interactions', async (req, res) => {
-  try {
-    const response = await fetch('http://localhost:3000/api/agent/exit-interactions', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' }
-    });
-    const data = await response.json();
-    res.redirect(`/panel?result=${encodeURIComponent(JSON.stringify(data, null, 2))}`);
-  } catch (e) {
-    res.redirect(`/panel?result=${encodeURIComponent('Error: ' + (e as Error).message)}`);
-  }
-});
-
-app.get('/panel', (req, res) => {
-  res.send(`
-    <html>
-      <head><title>Instagram AI Bot Control Panel</title></head>
-      <body style="font-family:sans-serif;max-width:600px;margin:2rem auto;">
-        <h1>Instagram AI Bot Control Panel</h1>
-        <form method="post" action="/api/agent/scrape-followers">
-          <input name="targetAccount" placeholder="Target Account" required />
-          <input name="maxFollowers" type="number" placeholder="Max Followers" value="10" required />
-          <button type="submit">Scrape & Download</button>
-        </form>
-        <hr />
-        <!-- Other controls here -->
-      </body>
-    </html>
-  `);
 });
 
 export default app;

@@ -142,6 +142,16 @@ export class IgClient {
     async sendDirectMessage(username: string, message: string) {
         if (!this.page) throw new Error("Page not initialized");
         try {
+            await this.sendDirectMessageWithMedia(username, message);
+        } catch (error) {
+            logger.error("Failed to send direct message", error);
+            throw error;
+        }
+    }
+
+    async sendDirectMessageWithMedia(username: string, message: string, mediaPath?: string) {
+        if (!this.page) throw new Error("Page not initialized");
+        try {
             await this.handleNotificationPopup();
             await this.page.goto(`https://www.instagram.com/${username}/`, {
                 waitUntil: "networkidle2",
@@ -149,6 +159,7 @@ export class IgClient {
             await this.handleNotificationPopup();
             console.log("Navigated to user profile");
             await delay(3000);
+
             const messageButtonSelectors = ['div[role="button"]', "button", 'a[href*="/direct/t/"]', 'div[role="button"] span', 'div[role="button"] div'];
             let messageButton: ElementHandle<Element> | null = null;
             for (const selector of messageButtonSelectors) {
@@ -165,6 +176,19 @@ export class IgClient {
             if (!messageButton) throw new Error("Message button not found.");
             await messageButton.click();
             await this.handleNotificationPopup();
+            await delay(2000); // Wait for message modal to open
+
+            if (mediaPath) {
+                const fileInput = await this.page.$('input[type="file"]');
+                if (fileInput) {
+                    await fileInput.uploadFile(mediaPath);
+                    await this.handleNotificationPopup();
+                    await delay(2000); // wait for upload
+                } else {
+                    logger.warn("File input for media not found.");
+                }
+            }
+
             const messageInputSelectors = ['textarea[placeholder="Message..."]', 'div[role="textbox"]', 'div[contenteditable="true"]', 'textarea[aria-label="Message"]'];
             let messageInput: ElementHandle<Element> | null = null;
             for (const selector of messageInputSelectors) {
@@ -175,6 +199,7 @@ export class IgClient {
             await messageInput.type(message);
             await this.handleNotificationPopup();
             await delay(2000);
+
             const sendButtonSelectors = ['div[role="button"]', "button"];
             let sendButton: ElementHandle<Element> | null = null;
             for (const selector of sendButtonSelectors) {
@@ -193,34 +218,21 @@ export class IgClient {
             await this.handleNotificationPopup();
             console.log("Message sent successfully");
         } catch (error) {
-            logger.error("Failed to send direct message", error);
+            logger.error(`Failed to send DM to ${username}`, error);
             throw error;
         }
     }
 
-    async sendDirectMessageWithMedia(username: string, message: string, mediaPath?: string) {
+    async sendDirectMessagesFromFile(file: Buffer | string, message: string, mediaPath?: string) {
         if (!this.page) throw new Error("Page not initialized");
-        try {
-            await this.handleNotificationPopup();
-            await this.sendDirectMessage(username, message);
-            if (mediaPath) {
-                const fileInput = await this.page.$('input[type="file"]');
-                if(fileInput) {
-                    await fileInput.uploadFile(mediaPath);
-                    await delay(2000);
-                    // Add logic to send the media
-                }
-            }
-            await this.handleNotificationPopup();
-        } catch (error) {
-            logger.error(`Failed to send DM with media to ${username}`, error);
+        logger.info(`Sending DMs from provided file content`);
+        let fileContent: string;
+        if (Buffer.isBuffer(file)) {
+            fileContent = file.toString('utf-8');
+        } else {
+            fileContent = file;
         }
-    }
-
-    async sendDirectMessagesFromFile(filePath: string, message: string, mediaPath?: string) {
-        if (!this.page) throw new Error("Page not initialized");
-        logger.info(`Sending DMs from file ${filePath}`);
-        const usernames = (await fs.readFile(filePath, "utf-8")).split("\n");
+        const usernames = fileContent.split("\n");
         for (const username of usernames) {
             if (username.trim()) {
                 await this.handleNotificationPopup();
@@ -352,16 +364,19 @@ export class IgClient {
             });
             console.log(`Navigated to ${targetAccount}'s followers page`);
 
-            // Handle potential notification popup
-            await this.handleNotificationPopup();
-
-            // Wait for the followers modal to load
-            await page.waitForSelector('div a[role="link"]');
+            // Wait for the followers modal to load (try robustly)
+            try {
+                await page.waitForSelector('div a[role="link"] span[title]');
+            } catch {
+                // fallback: wait for dialog
+                await page.waitForSelector('div[role="dialog"]');
+            }
             console.log("Followers modal loaded");
 
             const followers: string[] = [];
             let previousHeight = 0;
             let currentHeight = 0;
+            maxFollowers = maxFollowers + 4;
             // Scroll and collect followers until we reach the desired amount or can't scroll anymore
             console.log(maxFollowers);
             while (followers.length < maxFollowers) {
@@ -371,7 +386,9 @@ export class IgClient {
                         document.querySelectorAll('div a[role="link"]');
                     return Array.from(followerElements)
                         .map((element) => element.getAttribute("href"))
-                        .filter((href): href is string => href !== null && href.startsWith("/"))
+                        .filter(
+                            (href): href is string => href !== null && href.startsWith("/")
+                        )
                         .map((href) => href.substring(1)); // Remove leading slash
                 });
 
@@ -408,8 +425,8 @@ export class IgClient {
                 previousHeight = currentHeight;
             }
 
-            console.log(`Successfully scraped ${followers.length} followers`);
-            return followers.slice(0, maxFollowers);
+            console.log(`Successfully scraped ${followers.length - 4} followers`);
+            return followers.slice(4, maxFollowers);
         } catch (error) {
             console.error(`Error scraping followers for ${targetAccount}:`, error);
             throw error;

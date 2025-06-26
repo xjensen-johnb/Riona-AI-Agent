@@ -55,12 +55,12 @@ router.post('/dm', async (req: Request, res: Response) => {
 // Send messages from file endpoint
 router.post('/dm-file', async (req: Request, res: Response) => {
   try {
-    const { filepath, message, mediaPath } = req.body;
-    if (!filepath || !message) {
-      return res.status(400).json({ error: 'Filepath and message are required' });
+    const { file, message, mediaPath } = req.body;
+    if (!file || !message) {
+      return res.status(400).json({ error: 'File and message are required' });
     }
     const igClient = await getIgClient();
-    await igClient.sendDirectMessagesFromFile(filepath, message, mediaPath);
+    await igClient.sendDirectMessagesFromFile(file, message, mediaPath);
     return res.json({ message: 'Messages sent successfully' });
   } catch (error) {
     logger.error('File DM error:', error);
