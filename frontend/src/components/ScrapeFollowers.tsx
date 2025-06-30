@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Card from './Card';
 import { FaSearch, FaDownload } from 'react-icons/fa';
+import { motion } from 'framer-motion';
 
 interface ScrapeFollowersProps {
   log: (message: string) => void;
@@ -11,6 +12,7 @@ const ScrapeFollowers: React.FC<ScrapeFollowersProps> = ({ log }) => {
   const [maxFollowers, setMaxFollowers] = useState('10');
   const [followers, setFollowers] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
+  const [focus, setFocus] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -51,36 +53,65 @@ const ScrapeFollowers: React.FC<ScrapeFollowersProps> = ({ log }) => {
 
   return (
     <Card title="Scrape Followers">
-      <form onSubmit={handleSubmit}>
-        <input
+      <motion.form
+        onSubmit={handleSubmit}
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        <motion.input
           type="text"
           placeholder="Target Username"
           value={targetAccount}
           onChange={(e) => setTargetAccount(e.target.value)}
           required
+          onFocus={() => setFocus('targetAccount')}
+          onBlur={() => setFocus(null)}
+          animate={focus === 'targetAccount' ? { boxShadow: '0 0 8px #00f7ff' } : { boxShadow: 'none' }}
+          transition={{ duration: 0.2 }}
         />
-        <input
+        <motion.input
           type="number"
           placeholder="Max Followers"
           value={maxFollowers}
           onChange={(e) => setMaxFollowers(e.target.value)}
           required
+          onFocus={() => setFocus('maxFollowers')}
+          onBlur={() => setFocus(null)}
+          animate={focus === 'maxFollowers' ? { boxShadow: '0 0 8px #00f7ff' } : { boxShadow: 'none' }}
+          transition={{ duration: 0.2 }}
         />
-        <button type="submit" disabled={loading}>
+        <motion.button
+          className="ripple-btn"
+          type="submit"
+          disabled={loading}
+          whileHover={{ scale: 1.08, boxShadow: '0 0 12px #00f7ff' }}
+          whileTap={{ scale: 0.96, backgroundColor: '#00f7ff', color: '#0a0a1a' }}
+        >
           {loading ? 'Scraping...' : <><FaSearch /> Scrape Followers</>}
-        </button>
-      </form>
+        </motion.button>
+      </motion.form>
       {followers.length > 0 && (
-        <div>
-          <button onClick={handleDownload} style={{ marginTop: '1rem' }}>
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+        >
+          <motion.button
+            className="ripple-btn"
+            onClick={handleDownload}
+            style={{ marginTop: '1rem' }}
+            whileHover={{ scale: 1.08, boxShadow: '0 0 12px #00f7ff' }}
+            whileTap={{ scale: 0.96, backgroundColor: '#00f7ff', color: '#0a0a1a' }}
+          >
             <FaDownload /> Download Followers
-          </button>
+          </motion.button>
           <div style={{ marginTop: '1rem', maxHeight: '200px', overflowY: 'auto' }}>
             <ul>
               {followers.map((f, i) => <li key={i}>{f}</li>)}
             </ul>
           </div>
-        </div>
+        </motion.div>
       )}
     </Card>
   );

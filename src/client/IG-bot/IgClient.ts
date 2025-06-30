@@ -1,5 +1,5 @@
-import { Browser, Page, DEFAULT_INTERCEPT_RESOLUTION_PRIORITY, ElementHandle } from "puppeteer";
-import puppeteer from "puppeteer-extra";
+import * as puppeteer from 'puppeteer';
+import puppeteerExtra from "puppeteer-extra";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
 import AdblockerPlugin from "puppeteer-extra-plugin-adblocker";
 import UserAgent from "user-agents";
@@ -14,19 +14,19 @@ import fs from "fs/promises";
 import { getShouldExitInteractions } from '../../api/agent';
 
 // Add stealth plugin to puppeteer
-puppeteer.use(StealthPlugin());
-puppeteer.use(
+puppeteerExtra.use(StealthPlugin());
+puppeteerExtra.use(
   AdblockerPlugin({
     // Optionally enable Cooperative Mode for several request interceptors
-    interceptResolutionPriority: DEFAULT_INTERCEPT_RESOLUTION_PRIORITY,
+    interceptResolutionPriority: puppeteer.DEFAULT_INTERCEPT_RESOLUTION_PRIORITY,
   })
 );
 
 const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export class IgClient {
-    private browser: Browser | null = null;
-    private page: Page | null = null;
+    private browser: puppeteer.Browser | null = null;
+    private page: puppeteer.Page | null = null;
 
     async init() {
         // const server = new Server({ port: 8000 });
@@ -41,7 +41,7 @@ export class IgClient {
         const screenHeight = 1080;
         const left = Math.floor((screenWidth - width) / 2);
         const top = Math.floor((screenHeight - height) / 2);
-        this.browser = await puppeteer.launch({
+        this.browser = await puppeteerExtra.launch({
             headless: false,
             args: [
                 `--window-size=${width},${height}`,
@@ -100,42 +100,53 @@ export class IgClient {
     async handleNotificationPopup() {
         if (!this.page) throw new Error("Page not initialized");
         console.log("Checking for notification popup...");
-        const possibleTexts = [
-            "Not Now", "Not now", "No Thanks", "No thanks", "Cancel", "Close", "×"
-        ];
-        const possibleAriaLabels = [
-            "Close", "Dismiss", "Cancel"
-        ];
-        const selectors = [
-            "button", "div[role='button']", "span[role='button']"
-        ];
 
-        for (let attempt = 0; attempt < 3; attempt++) {
-            let found = false;
-            for (const selector of selectors) {
-                const elements = await this.page.$$(selector);
-                for (const element of elements) {
-                    const text = await element.evaluate((el: Element) => el.textContent?.trim() || "");
-                    const ariaLabel = await element.evaluate((el: Element) => el.getAttribute("aria-label") || "");
-                    if (
-                        possibleTexts.includes(text) ||
-                        possibleAriaLabels.includes(ariaLabel)
-                    ) {
-                        console.log(`Dismissing popup with selector: ${selector}, text: "${text}", aria-label: "${ariaLabel}"`);
-                        await element.click();
-                        await delay(1000);
-                        found = true;
-                        break;
+        try {
+            // Wait for the dialog to appear, with a timeout
+            const dialogSelector = 'div[role="dialog"]';
+            await this.page.waitForSelector(dialogSelector, { timeout: 5000 });
+            const dialog = await this.page.$(dialogSelector);
+
+            if (dialog) {
+                console.log("Notification dialog found. Searching for 'Not Now' button.");
+                const notNowButtonSelectors = ["button", `div[role="button"]`];
+                let notNowButton: puppeteer.ElementHandle<Element> | null = null;
+
+                for (const selector of notNowButtonSelectors) {
+                    // Search within the dialog context
+                    const elements = await dialog.$$(selector);
+                    for (const element of elements) {
+                        try {
+                            const text = await element.evaluate((el) => el.textContent);
+                            if (text && text.trim().toLowerCase() === "not now") {
+                                notNowButton = element;
+                                console.log(`Found 'Not Now' button with selector: ${selector}`);
+                                break;
+                            }
+                        } catch (e) {
+                            // Ignore errors from stale elements
+                        }
                     }
+                    if (notNowButton) break;
                 }
-                if (found) break;
+
+                if (notNowButton) {
+                    try {
+                        console.log("Dismissing 'Not Now' notification popup...");
+                        // Using evaluate to click because it can be more reliable
+                        await notNowButton.evaluate((btn:any) => btn.click());
+                        await delay(1500); // Wait for popup to close
+                        console.log("'Not Now' notification popup dismissed.");
+                    } catch (e) {
+                        console.warn("Failed to click 'Not Now' button. It might be gone or covered.", e);
+                    }
+                } else {
+                    console.log("'Not Now' button not found within the dialog.");
+                }
             }
-            if (!found) {
-                console.log("No notification popup found.");
-                break;
-            }
-            // Wait a bit and check again in case another popup appears
-            await delay(500);
+        } catch (error) {
+            console.log("No notification popup appeared within the timeout period.");
+            // If it times out, it means no popup, which is fine.
         }
     }
 
@@ -152,16 +163,14 @@ export class IgClient {
     async sendDirectMessageWithMedia(username: string, message: string, mediaPath?: string) {
         if (!this.page) throw new Error("Page not initialized");
         try {
-            await this.handleNotificationPopup();
             await this.page.goto(`https://www.instagram.com/${username}/`, {
                 waitUntil: "networkidle2",
             });
-            await this.handleNotificationPopup();
             console.log("Navigated to user profile");
             await delay(3000);
 
             const messageButtonSelectors = ['div[role="button"]', "button", 'a[href*="/direct/t/"]', 'div[role="button"] span', 'div[role="button"] div'];
-            let messageButton: ElementHandle<Element> | null = null;
+            let messageButton: puppeteer.ElementHandle<Element> | null = null;
             for (const selector of messageButtonSelectors) {
                 const elements = await this.page.$$(selector);
                 for (const element of elements) {
@@ -175,8 +184,8 @@ export class IgClient {
             }
             if (!messageButton) throw new Error("Message button not found.");
             await messageButton.click();
-            await this.handleNotificationPopup();
             await delay(2000); // Wait for message modal to open
+            await this.handleNotificationPopup();
 
             if (mediaPath) {
                 const fileInput = await this.page.$('input[type="file"]');
@@ -190,7 +199,7 @@ export class IgClient {
             }
 
             const messageInputSelectors = ['textarea[placeholder="Message..."]', 'div[role="textbox"]', 'div[contenteditable="true"]', 'textarea[aria-label="Message"]'];
-            let messageInput: ElementHandle<Element> | null = null;
+            let messageInput: puppeteer.ElementHandle<Element> | null = null;
             for (const selector of messageInputSelectors) {
                 messageInput = await this.page.$(selector);
                 if (messageInput) break;
@@ -201,7 +210,7 @@ export class IgClient {
             await delay(2000);
 
             const sendButtonSelectors = ['div[role="button"]', "button"];
-            let sendButton: ElementHandle<Element> | null = null;
+            let sendButton: puppeteer.ElementHandle<Element> | null = null;
             for (const selector of sendButtonSelectors) {
                 const elements = await this.page.$$(selector);
                 for (const element of elements) {
@@ -324,7 +333,7 @@ export class IgClient {
                     const postButtonElement = postButton && postButton.asElement ? postButton.asElement() : null;
                     if (postButtonElement) {
                         console.log(`Posting comment on post ${postIndex}...`);
-                        await (postButtonElement as import('puppeteer').ElementHandle<Element>).click();
+                        await (postButtonElement as puppeteer.ElementHandle<Element>).click();
                         console.log(`Comment posted on post ${postIndex}.`);
                         // Wait for comment to be posted and UI to update
                         await delay(2000);

@@ -5,6 +5,7 @@ import ScrapeFollowers from './components/ScrapeFollowers'
 import SendDmsFromFile from './components/SendDmsFromFile'
 import Logs from './components/Logs'
 import { FaRobot } from 'react-icons/fa'
+import { motion } from 'framer-motion'
 
 function App() {
   const [logs, setLogs] = useState<string[]>([])
@@ -67,12 +68,39 @@ function App() {
     <>
       {!dbConnected && (
         <div id="spinner-overlay">
-          <div className="spinner"></div>
+          <motion.svg
+            width="60" height="60" viewBox="0 0 60 60"
+            initial={{ rotate: 0 }}
+            animate={{ rotate: 360 }}
+            transition={{ repeat: Infinity, duration: 1, ease: 'linear' }}
+            style={{ marginBottom: 20 }}
+          >
+            <circle
+              cx="30" cy="30" r="24"
+              stroke="#00f7ff"
+              strokeWidth="6"
+              fill="none"
+              strokeDasharray="120"
+              strokeDashoffset="40"
+              strokeLinecap="round"
+              opacity="0.7"
+            />
+          </motion.svg>
           <p>Connecting to database...</p>
         </div>
       )}
       <div className="container">
-        <h1><FaRobot /> Instagram Bot Control</h1>
+        <h1>
+          <motion.span
+            whileHover={{ scale: 1.15, rotate: 10, textShadow: '0 0 16px #00f7ff' }}
+            animate={{ scale: [1, 1.08, 1], rotate: [0, 5, -5, 0] }}
+            transition={{ repeat: Infinity, duration: 3, ease: 'easeInOut' }}
+            style={{ display: 'inline-block', marginRight: 10 }}
+          >
+            <FaRobot />
+          </motion.span>
+          Instagram Bot Control
+        </h1>
         <GeneralActions apiCall={apiCall} />
         <SendDirectMessage apiCall={apiCall} />
         <ScrapeFollowers log={log} />
