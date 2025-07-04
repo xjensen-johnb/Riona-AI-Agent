@@ -2,8 +2,21 @@ import express, { Request, Response } from 'express';
 import { getIgClient, closeIgClient, scrapeFollowersHandler } from '../client/Instagram';
 import logger from '../config/logger';
 import mongoose from 'mongoose';
+import { signToken, verifyToken, getTokenFromRequest } from '../secret';
 
 const router = express.Router();
+
+// JWT Auth middleware
+function requireAuth(req: Request, res: Response, next: Function) {
+  const token = getTokenFromRequest(req);
+  if (!token) return res.status(401).json({ error: 'Not authenticated' });
+  const payload = verifyToken(token);
+  if (!payload || typeof payload !== 'object' || !('username' in payload)) {
+    return res.status(401).json({ error: 'Invalid token' });
+  }
+  (req as any).user = { username: payload.username };
+  next();
+}
 
 // Status endpoint
 router.get('/status', (_req: Request, res: Response) => {
@@ -14,9 +27,21 @@ router.get('/status', (_req: Request, res: Response) => {
 });
 
 // Login endpoint
-router.post('/login', async (_req: Request, res: Response) => {
+router.post('/login', async (req: Request, res: Response) => {
   try {
-    const igClient = await getIgClient();
+    const { username, password } = req.body;
+    if (!username || !password) {
+      return res.status(400).json({ error: 'Username and password are required' });
+    }
+    const igClient = await getIgClient(username, password);
+    // Sign JWT and set as httpOnly cookie
+    const token = signToken({ username });
+    res.cookie('token', token, {
+      httpOnly: true,
+      sameSite: 'lax',
+      maxAge: 2 * 60 * 60 * 1000, // 2 hours
+      secure: process.env.NODE_ENV === 'production',
+    });
     return res.json({ message: 'Login successful' });
   } catch (error) {
     logger.error('Login error:', error);
@@ -24,10 +49,24 @@ router.post('/login', async (_req: Request, res: Response) => {
   }
 });
 
+// Auth check endpoint
+router.get('/me', (req: Request, res: Response) => {
+  const token = getTokenFromRequest(req);
+  if (!token) return res.status(401).json({ error: 'Not authenticated' });
+  const payload = verifyToken(token);
+  if (!payload || typeof payload !== 'object' || !('username' in payload)) {
+    return res.status(401).json({ error: 'Invalid token' });
+  }
+  return res.json({ username: payload.username });
+});
+
+// All routes below require authentication
+router.use(requireAuth);
+
 // Interact with posts endpoint
-router.post('/interact', async (_req: Request, res: Response) => {
+router.post('/interact', async (req: Request, res: Response) => {
   try {
-    const igClient = await getIgClient();
+    const igClient = await getIgClient((req as any).user.username);
     await igClient.interactWithPosts();
     return res.json({ message: 'Interaction successful' });
   } catch (error) {
@@ -43,7 +82,7 @@ router.post('/dm', async (req: Request, res: Response) => {
     if (!username || !message) {
       return res.status(400).json({ error: 'Username and message are required' });
     }
-    const igClient = await getIgClient();
+    const igClient = await getIgClient((req as any).user.username);
     await igClient.sendDirectMessage(username, message);
     return res.json({ message: 'Message sent successfully' });
   } catch (error) {
@@ -59,7 +98,7 @@ router.post('/dm-file', async (req: Request, res: Response) => {
     if (!file || !message) {
       return res.status(400).json({ error: 'File and message are required' });
     }
-    const igClient = await getIgClient();
+    const igClient = await getIgClient((req as any).user.username);
     await igClient.sendDirectMessagesFromFile(file, message, mediaPath);
     return res.json({ message: 'Messages sent successfully' });
   } catch (error) {
@@ -120,6 +159,16 @@ router.post('/exit', async (_req: Request, res: Response) => {
     logger.error('Exit error:', error);
     return res.status(500).json({ error: 'Failed to exit gracefully' });
   }
+});
+
+// Logout endpoint
+router.post('/logout', (req: Request, res: Response) => {
+  res.clearCookie('token', {
+    httpOnly: true,
+    sameSite: 'lax',
+    secure: process.env.NODE_ENV === 'production',
+  });
+  return res.json({ message: 'Logged out successfully' });
 });
 
 export default router; 

@@ -3,6 +3,7 @@ import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
 import helmet from "helmet"; // For securing HTTP headers
 import cors from "cors";
+import session from 'express-session';
 
 import logger, { setupErrorHandlers } from "./config/logger";
 import { setup_HandleError } from "./utils";
@@ -36,6 +37,12 @@ app.use(cors());
 app.use(express.json()); // JSON body parsing
 app.use(express.urlencoded({ extended: true, limit: "1kb" })); // URL-encoded data
 app.use(cookieParser()); // Cookie parsing
+app.use(session({
+  secret: process.env.SESSION_SECRET || 'supersecretkey',
+  resave: false,
+  saveUninitialized: false,
+  cookie: { maxAge: 2 * 60 * 60 * 1000, sameSite: 'lax' },
+}));
 
 // Serve static files from the 'public' directory
 app.use(express.static('frontend/dist'));

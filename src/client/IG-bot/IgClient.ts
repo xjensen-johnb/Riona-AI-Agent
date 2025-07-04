@@ -27,6 +27,13 @@ const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 export class IgClient {
     private browser: puppeteer.Browser | null = null;
     private page: puppeteer.Page | null = null;
+    private username: string;
+    private password: string;
+
+    constructor(username?: string, password?: string) {
+        this.username = username || '';
+        this.password = password || '';
+    }
 
     async init() {
         // const server = new Server({ port: 8000 });
@@ -87,8 +94,8 @@ export class IgClient {
             waitUntil: "networkidle2",
         });
         await this.page.waitForSelector('input[name="username"]');
-        await this.page.type('input[name="username"]', IGusername);
-        await this.page.type('input[name="password"]', IGpassword);
+        await this.page.type('input[name="username"]', this.username);
+        await this.page.type('input[name="password"]', this.password);
         await this.page.click('button[type="submit"]');
         await this.page.waitForNavigation({ waitUntil: "networkidle2" });
         const cookies = await this.page.cookies();
