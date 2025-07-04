@@ -3,6 +3,8 @@ import { getIgClient, closeIgClient, scrapeFollowersHandler } from '../client/In
 import logger from '../config/logger';
 import mongoose from 'mongoose';
 import { signToken, verifyToken, getTokenFromRequest } from '../secret';
+import fs from 'fs/promises';
+import path from 'path';
 
 const router = express.Router();
 
@@ -58,6 +60,21 @@ router.get('/me', (req: Request, res: Response) => {
     return res.status(401).json({ error: 'Invalid token' });
   }
   return res.json({ username: payload.username });
+});
+
+// Endpoint to clear Instagram cookies
+router.delete('/clear-cookies', async (req, res) => {
+  const cookiesPath = path.join(__dirname, '../../cookies/Instagramcookies.json');
+  try {
+    await fs.unlink(cookiesPath);
+    res.json({ success: true, message: 'Instagram cookies cleared.' });
+  } catch (err: any) {
+    if (err.code === 'ENOENT') {
+      res.json({ success: true, message: 'No cookies to clear.' });
+    } else {
+      res.status(500).json({ success: false, message: 'Failed to clear cookies.', error: err.message });
+    }
+  }
 });
 
 // All routes below require authentication
