@@ -1,3 +1,13 @@
+## Support the Project 🙌
+
+If you'd like to support the development of Instagram-AI-Agent, please consider contributing to the following wallet addresses:
+
+- **Bitcoin (BTC)**: 1GkWY6pjn7KoAkCnUab2MxnxeEQihknfUi
+- **Ethereum (ETH-erc20)**: 0xabb45f4d85e7d9db5de684c35ccde7239a167cbb
+- **Solana (SOL)**: EQV7fQ57zKNMFXy53WBfo2sCxtkRQVQLqj8sqWGnoyR
+
+Your support helps keep this project running and growing! 🚀
+
 ## Instagram-AI-Agent 🌸
 
 Instagram-AI-Agent is an AI-powered automation tool designed for **Instagram** to automate social media interactions such as posting, liking, and commenting. It leverages advanced AI models to generate engaging content, automate interactions, and manage Instagram accounts efficiently.
