@@ -148,8 +148,13 @@ Contributions are welcome! Please fork the repository and submit a pull request 
 
 This project is licensed under the MIT License. See the LICENSE file for details.
 
-## Acknowledgements
+## Stargazers
+Thank you to all our supporters!
 
-- [Google Generative AI](https://ai.google/tools/) for providing the AI models.
-- [Puppeteer](https://github.com/puppeteer/puppeteer) for browser automation.
-- [puppeteer-extra](https://github.com/berstend/puppeteer-extra) for additional plugins and enhancements.
+[![Star History Chart](https://api.star-history.com/svg?repos=browseros-ai/BrowserOS&type=Date)](https://www.star-history.com/#browseros-ai/BrowserOS&Date)
+
+## 
+
+<p align="center">
+Built with ❤️ by David Patrick 
+</p>
