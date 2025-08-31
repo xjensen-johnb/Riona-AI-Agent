@@ -151,7 +151,7 @@ This project is licensed under the MIT License. See the LICENSE file for details
 ## Stargazers
 Thank you to all our supporters!
 
-[![Star History Chart](https://api.star-history.com/svg?repos=browseros-ai/BrowserOS&type=Date)](https://www.star-history.com/#browseros-ai/BrowserOS&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=David-patrick-chuks/Riona-AI-Agent&type=Date)](https://www.star-history.com/#David-patrick-chuks/Riona-AI-Agent&Date)
 
 ## 
 
