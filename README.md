@@ -1,3 +1,13 @@
+## Support the Project 🙌
+
+If you'd like to support the development of Instagram-AI-Agent, please consider contributing to the following wallet addresses:
+
+- **Bitcoin (BTC)**: 1GkWY6pjn7KoAkCnUab2MxnxeEQihknfUi
+- **Ethereum (ETH-erc20)**: 0xabb45f4d85e7d9db5de684c35ccde7239a167cbb
+- **Solana (SOL)**: EQV7fQ57zKNMFXy53WBfo2sCxtkRQVQLqj8sqWGnoyR
+
+Your support helps keep this project running and growing! 🚀
+
 ## Instagram-AI-Agent 🌸
 
 Instagram-AI-Agent is an AI-powered automation tool designed for **Instagram** to automate social media interactions such as posting, liking, and commenting. It leverages advanced AI models to generate engaging content, automate interactions, and manage Instagram accounts efficiently.
@@ -138,8 +148,13 @@ Contributions are welcome! Please fork the repository and submit a pull request 
 
 This project is licensed under the MIT License. See the LICENSE file for details.
 
-## Acknowledgements
+## Stargazers
+Thank you to all our supporters!
 
-- [Google Generative AI](https://ai.google/tools/) for providing the AI models.
-- [Puppeteer](https://github.com/puppeteer/puppeteer) for browser automation.
-- [puppeteer-extra](https://github.com/berstend/puppeteer-extra) for additional plugins and enhancements.
+[![Star History Chart](https://api.star-history.com/svg?repos=David-patrick-chuks/Riona-AI-Agent&type=Date)](https://www.star-history.com/#David-patrick-chuks/Riona-AI-Agent&Date)
+
+## 
+
+<p align="center">
+Built with ❤️ by David Patrick 
+</p>
