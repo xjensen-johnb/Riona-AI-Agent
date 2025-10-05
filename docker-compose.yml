@@ -11,3 +11,5 @@ services:
 networks:
   instagram-ai-network:
     external: true
+
+# Update: 2025-10-05
